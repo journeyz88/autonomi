@@ -76,7 +76,7 @@ impl Node {
                 };
 
                 if let Err(err) = node.store_replicated_in_record(record).await {
-                    error!("During store replication fetched {pretty_key:?} from holder {holder:?}, got error {err:?}");
+                    // error!("During store replication fetched {pretty_key:?} from holder {holder:?}, got error {err:?}");
                 } else {
                     debug!("Completed storing Replication Record {pretty_key:?} from holder {holder:?}.");
                 }

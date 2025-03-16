@@ -353,7 +353,7 @@ impl Node {
 
                             }
                             None => {
-                                error!("The `NetworkEvent` channel is closed");
+                                // error!("The `NetworkEvent` channel is closed");
                                 self.events_channel().broadcast(NodeEvent::ChannelClosed);
                                 break;
                             }
@@ -479,7 +479,7 @@ impl Node {
             NetworkEvent::ResponseReceived { res } => {
                 event_header = "ResponseReceived";
                 if let Err(err) = self.handle_response(res) {
-                    error!("Error while handling NetworkEvent::ResponseReceived {err:?}");
+                    // error!("Error while handling NetworkEvent::ResponseReceived {err:?}");
                 }
             }
             NetworkEvent::KeysToFetchForReplication(keys) => {
@@ -487,7 +487,7 @@ impl Node {
                 self.record_metrics(Marker::fetching_keys_for_replication(&keys));
 
                 if let Err(err) = self.fetch_replication_keys_without_wait(keys) {
-                    error!("Error while trying to fetch replicated data {err:?}");
+                    // error!("Error while trying to fetch replicated data {err:?}");
                 }
             }
             NetworkEvent::QueryRequestReceived { query, channel } => {
@@ -518,7 +518,7 @@ impl Node {
             }
             NetworkEvent::TerminateNode { reason } => {
                 event_header = "TerminateNode";
-                error!("Received termination from swarm_driver due to {reason:?}");
+                // error!("Received termination from swarm_driver due to {reason:?}");
                 self.events_channel()
                     .broadcast(NodeEvent::TerminateNode(format!("{reason}")));
             }
@@ -542,10 +542,10 @@ impl Node {
                         // in peer to be claimed as bad, as local copy blocks the entry to be cleared.
                         if let Ok(false) = network.is_record_key_present_locally(&record_key).await
                         {
-                            error!(
-                                "From peer {peer_id:?}, failed to fetch record {:?}",
-                                PrettyPrintRecordKey::from(&record_key)
-                            );
+                            // error!(
+                            //     "From peer {peer_id:?}, failed to fetch record {:?}",
+                            //     PrettyPrintRecordKey::from(&record_key)
+                            // );
                             network.record_node_issues(peer_id, NodeIssue::ReplicationFailure);
                         }
                     }
@@ -579,7 +579,7 @@ impl Node {
                 warn!("Mishandled replicate response, should be handled earlier");
             }
             Response::Query(QueryResponse::GetReplicatedRecord(resp)) => {
-                error!("Response to replication shall be handled by called not by common handler, {resp:?}");
+                // error!("Response to replication shall be handled by called not by common handler, {resp:?}");
             }
             Response::Cmd(CmdResponse::FreshReplicate(Ok(()))) => {
                 // No need to handle
@@ -866,7 +866,7 @@ impl Node {
                     .take(CLOSE_GROUP_SIZE)
                     .collect_vec()
             } else {
-                error!("Cannot get local neighbours");
+                // error!("Cannot get local neighbours");
                 return;
             };
         if closest_peers.len() < CLOSE_GROUP_SIZE {
@@ -891,7 +891,7 @@ impl Node {
                     })
                     .collect()
             } else {
-                error!("Failed to get local record addresses.");
+                // error!("Failed to get local record addresses.");
                 return;
             };
         let num_of_targets = verify_candidates.len();

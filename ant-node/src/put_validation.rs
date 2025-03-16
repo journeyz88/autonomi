@@ -105,7 +105,7 @@ impl Node {
             }
 
             RecordKind::DataOnly(DataTypes::Chunk) => {
-                error!("Chunk should not be validated at this point");
+                // error!("Chunk should not be validated at this point");
                 Err(Error::InvalidPutWithoutPayment(
                     PrettyPrintRecordKey::from(&record.key).into_owned(),
                 ))
@@ -187,7 +187,7 @@ impl Node {
             }
             RecordKind::DataOnly(DataTypes::GraphEntry) => {
                 // Transactions should always be paid for
-                error!("Transaction should not be validated at this point");
+                // error!("Transaction should not be validated at this point");
                 Err(Error::InvalidPutWithoutPayment(
                     PrettyPrintRecordKey::from(&record.key).into_owned(),
                 ))
@@ -224,7 +224,7 @@ impl Node {
                     if already_exists {
                         debug!("Payment of the incoming existing GraphEntry {pretty_key:?} having error {err:?}");
                     } else {
-                        error!("Payment of the incoming new GraphEntry {pretty_key:?} having error {err:?}");
+                        // error!("Payment of the incoming new GraphEntry {pretty_key:?} having error {err:?}");
                         return Err(err);
                     }
                 }
@@ -308,7 +308,7 @@ impl Node {
                     if already_exists {
                         debug!("Payment of the incoming exists pointer {pretty_key:?} having error {err:?}");
                     } else {
-                        error!("Payment of the incoming non-exist pointer {pretty_key:?} having error {err:?}");
+                        // error!("Payment of the incoming non-exist pointer {pretty_key:?} having error {err:?}");
                         return Err(err);
                     }
                 }
@@ -769,7 +769,7 @@ impl Node {
         let local_header = RecordHeader::from_record(&local_record)?;
         let record_kind = local_header.kind;
         if !matches!(record_kind, RecordKind::DataOnly(DataTypes::GraphEntry)) {
-            error!("Found a {record_kind} when expecting to find GraphEntry at {addr:?}");
+            // error!("Found a {record_kind} when expecting to find GraphEntry at {addr:?}");
             return Err(NetworkError::RecordKindMismatch(RecordKind::DataOnly(
                 DataTypes::GraphEntry,
             ))
@@ -793,7 +793,7 @@ impl Node {
                 return None;
             }
             Err(e) => {
-                error!("Failed to get Pointer record at {addr:?}: {e}");
+                // error!("Failed to get Pointer record at {addr:?}: {e}");
                 return None;
             }
         };
@@ -802,19 +802,19 @@ impl Node {
         let local_header = match RecordHeader::from_record(&local_record) {
             Ok(h) => h,
             Err(_) => {
-                error!("Failed to deserialize Pointer record at {addr:?}");
+                // error!("Failed to deserialize Pointer record at {addr:?}");
                 return None;
             }
         };
         let record_kind = local_header.kind;
         if !matches!(record_kind, RecordKind::DataOnly(DataTypes::Pointer)) {
-            error!("Found a {record_kind} when expecting to find Pointer at {addr:?}");
+            // error!("Found a {record_kind} when expecting to find Pointer at {addr:?}");
             return None;
         }
         let local_pointer: Pointer = match try_deserialize_record(&local_record) {
             Ok(p) => p,
             Err(_) => {
-                error!("Failed to deserialize Pointer record at {addr:?}");
+                // error!("Failed to deserialize Pointer record at {addr:?}");
                 return None;
             }
         };

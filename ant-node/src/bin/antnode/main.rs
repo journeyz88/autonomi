@@ -412,7 +412,7 @@ You can check your reward balance by running:
             })
             .await
         {
-            error!("Failed to send node control msg to antnode bin main thread: {err}");
+            // error!("Failed to send node control msg to antnode bin main thread: {err}");
         }
     });
 
@@ -457,7 +457,7 @@ You can check your reward balance by running:
                         return Ok(None);
                     }
                     StopResult::Error(cause) => {
-                        error!("Node stopped with error: {}", cause);
+                        // error!("Node stopped with error: {}", cause);
                         set_critical_failure(log_output_dest, &cause.to_string());
                         return Err(cause);
                     }
@@ -488,7 +488,7 @@ fn monitor_node_events(mut node_events_rx: NodeEventsReceiver, ctrl_tx: mpsc::Se
                         })
                         .await
                     {
-                        error!("Failed to send node control msg to antnode bin main thread: {err}");
+                        // error!("Failed to send node control msg to antnode bin main thread: {err}");
                         break;
                     }
                 }
@@ -500,7 +500,7 @@ fn monitor_node_events(mut node_events_rx: NodeEventsReceiver, ctrl_tx: mpsc::Se
                         })
                         .await
                     {
-                        error!("Failed to send node control msg to antnode bin main thread: {err}");
+                        // error!("Failed to send node control msg to antnode bin main thread: {err}");
                         break;
                     }
                 }
@@ -540,20 +540,20 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
     // };
     // 强制所有日志输出到标准输出
     // 使用内存中的虚拟路径避免文件系统操作
-    let output_dest = LogOutputDest::Path(PathBuf::from("/dev/null").join("antnode.log")); // 虚拟文件路径
-    // let output_dest = LogOutputDest::Stdout;
+    // let output_dest = LogOutputDest::Path(PathBuf::from("/dev/null").join("antnode.log")); // 虚拟文件路径
+    let output_dest = LogOutputDest::Stdout;
 
     #[cfg(not(feature = "otlp"))]
     let (reload_handle, log_appender_guard) = {
         let mut log_builder = ant_logging::LogBuilder::new(logging_targets);
         log_builder.output_dest(output_dest.clone());
         log_builder.format(opt.log_format.unwrap_or(LogFormat::Default));
-        // if let Some(files) = opt.max_log_files {
-        //     log_builder.max_log_files(files);
-        // }
-        // if let Some(files) = opt.max_archived_log_files {
-        //     log_builder.max_archived_log_files(files);
-        // }
+        if let Some(files) = opt.max_log_files {
+            log_builder.max_log_files(files);
+        }
+        if let Some(files) = opt.max_archived_log_files {
+            log_builder.max_archived_log_files(files);
+        }
 
         log_builder.initialize()?
     };
@@ -566,12 +566,12 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
             let mut log_builder = ant_logging::LogBuilder::new(logging_targets);
             log_builder.output_dest(output_dest.clone());
             log_builder.format(opt.log_format.unwrap_or(LogFormat::Default));
-            // if let Some(files) = opt.max_log_files {
-            //     log_builder.max_log_files(files);
-            // }
-            // if let Some(files) = opt.max_archived_log_files {
-            //     log_builder.max_archived_log_files(files);
-            // }
+            if let Some(files) = opt.max_log_files {
+                log_builder.max_log_files(files);
+            }
+            if let Some(files) = opt.max_archived_log_files {
+                log_builder.max_archived_log_files(files);
+            }
 
             log_builder.initialize()
         })?;
@@ -609,7 +609,7 @@ fn start_new_node_process(retain_peer_id: bool, root_dir: PathBuf, port: u16) {
             }
         }
         None => {
-            error!("Failed to convert current executable path to string");
+            // error!("Failed to convert current executable path to string");
             return;
         }
     };
@@ -638,7 +638,7 @@ fn start_new_node_process(retain_peer_id: bool, root_dir: PathBuf, port: u16) {
             // Do not return an error as this isn't a critical failure.
             // The current node can continue.
             eprintln!("Failed to execute hard-restart command: {e:?}");
-            error!("Failed to execute hard-restart command: {e:?}");
+            // error!("Failed to execute hard-restart command: {e:?}");
 
             return;
         }
