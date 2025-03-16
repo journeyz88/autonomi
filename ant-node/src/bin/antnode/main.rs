@@ -545,7 +545,7 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
 
     #[cfg(not(feature = "otlp"))]
     let (reload_handle, log_appender_guard) = {
-        let mut log_builder = ant_logging::LogBuilder::new(logging_targets)
+        let mut log_builder = ant_logging::LogBuilder::new(logging_targets);
         log_builder.output_dest(output_dest.clone());
         log_builder.format(opt.log_format.unwrap_or(LogFormat::Default));
         // if let Some(files) = opt.max_log_files {
@@ -566,7 +566,7 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
         // init logging in a separate runtime if we are sending traces to an opentelemetry server
         let rt = Runtime::new()?;
         let (reload_handle, log_appender_guard) = rt.block_on(async {
-            let mut log_builder = ant_logging::LogBuilder::new(logging_targets)
+            let mut log_builder = ant_logging::LogBuilder::new(logging_targets);
             log_builder.output_dest(output_dest.clone());
             log_builder.format(opt.log_format.unwrap_or(LogFormat::Default));
             // if let Some(files) = opt.max_log_files {
