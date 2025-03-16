@@ -911,7 +911,7 @@ impl RecordStore for NodeRecordStore {
                 }
             }
             Err(err) => {
-                error!("For record {record_key:?}, failed to parse record_header {err:?}");
+                // error!("For record {record_key:?}, failed to parse record_header {err:?}");
                 return Ok(());
             }
         }
@@ -924,7 +924,7 @@ impl RecordStore for NodeRecordStore {
                 .send(NetworkEvent::UnverifiedRecord(record))
                 .await
             {
-                error!("SwarmDriver failed to send event: {}", error);
+                // error!("SwarmDriver failed to send event: {}", error);
             }
         });
 
@@ -960,7 +960,7 @@ impl RecordStore for NodeRecordStore {
                     info!("Removed record from disk! filename: {filename}");
                 }
                 Err(err) => {
-                    error!("Error while removing file. filename: {filename}, error: {err:?}");
+                    // error!("Error while removing file. filename: {filename}, error: {err:?}");
                 }
             }
         });

@@ -351,7 +351,7 @@ impl SwarmDriver {
                         // (eg, could not get a port for a tcp connection)
                         // so we default to it not being a real issue
                         // unless there are _specific_ errors (connection refused eg)
-                        error!("Dial errors len : {:?}", errors.len());
+                        // error!("Dial errors len : {:?}", errors.len());
                         let mut there_is_a_serious_issue = false;
                         // Libp2p throws errors for all the listen addr (including private) of the remote peer even
                         // though we try to dial just the global/public addr. This would mean that we get
@@ -371,7 +371,7 @@ impl SwarmDriver {
                                     }
                                 }
                                 TransportError::Other(err) => {
-                                    error!("OutgoingConnectionError: Transport::Other {err:?}");
+                                    // error!("OutgoingConnectionError: Transport::Other {err:?}");
 
                                     all_multiaddr_not_supported = false;
                                     let problematic_errors = [
@@ -434,7 +434,7 @@ impl SwarmDriver {
                     DialError::WrongPeerId { obtained, endpoint } => {
                         // The peer id we attempted to dial was not the one we expected
                         // cleanup
-                        error!("OutgoingConnectionError: WrongPeerId: obtained: {obtained:?}, endpoint: {endpoint:?}");
+                        // error!("OutgoingConnectionError: WrongPeerId: obtained: {obtained:?}, endpoint: {endpoint:?}");
                         true
                     }
                     DialError::Denied { cause } => {

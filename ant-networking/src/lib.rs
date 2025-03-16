@@ -958,7 +958,7 @@ impl Network {
         let mut r = receiver.await?;
 
         if let Err(error) = &r {
-            error!("Error in response: {:?}", error);
+            // error!("Error in response: {:?}", error);
 
             match error {
                 NetworkError::OutboundError(OutboundFailure::Io(_))
