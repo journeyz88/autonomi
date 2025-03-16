@@ -43,6 +43,7 @@ use tokio::{
     time::sleep,
 };
 use tracing_appender::non_blocking::WorkerGuard;
+use tracing_subscriber::filter::LevelFilter;
 
 #[derive(Debug, Clone)]
 pub enum LogOutputDestArg {
@@ -534,8 +535,8 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
 
     #[cfg(not(feature = "otlp"))]
     let (reload_handle, log_appender_guard) = {
-        let mut log_builder = ant_logging::LogBuilder::new(logging_targets);
-        log_builder.level(Level::from(LevelFilter::OFF)); // 正确设置日志级别过滤器
+        let mut log_builder = ant_logging::LogBuilder::new(logging_targets)
+            .with_filter(LevelFilter::OFF); // 使用正确的过滤器设置方法
 
         log_builder.output_dest(output_dest.clone());
         log_builder.format(opt.log_format.unwrap_or(LogFormat::Default));
@@ -553,8 +554,8 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
     let (_rt, reload_handle, log_appender_guard) = {
         let rt = Runtime::new()?;
         let (reload_handle, log_appender_guard) = rt.block_on(async {
-            let mut log_builder = ant_logging::LogBuilder::new(logging_targets);
-            log_builder.level(Level::from(LevelFilter::OFF)); // 正确设置日志级别过滤器
+            let mut log_builder = ant_logging::LogBuilder::new(logging_targets)
+            .with_filter(LevelFilter::OFF); // 使用正确的过滤器设置方法
 
             log_builder.output_dest(output_dest.clone());
             log_builder.format(opt.log_format.unwrap_or(LogFormat::Default));
