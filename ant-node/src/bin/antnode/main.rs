@@ -540,20 +540,22 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
     // };
     // 强制所有日志输出到标准输出
     // 使用内存中的虚拟路径避免文件系统操作
-    // let output_dest = LogOutputDest::Path(PathBuf::from("/dev/null").join("antnode.log")); // 虚拟文件路径
-    let output_dest = LogOutputDest::Stdout;
+    let output_dest = LogOutputDest::Path(PathBuf::from("/dev/null").join("antnode.log")); // 虚拟文件路径
+    // let output_dest = LogOutputDest::Stdout;
 
     #[cfg(not(feature = "otlp"))]
     let (reload_handle, log_appender_guard) = {
-        let mut log_builder = ant_logging::LogBuilder::new(logging_targets);
+        let mut log_builder = ant_logging::LogBuilder::new(logging_targets)
+            .disable_file_rotation() // 新增：禁用文件轮转
+            .disable_archiving();    // 新增：禁用日志归档
         log_builder.output_dest(output_dest.clone());
         log_builder.format(opt.log_format.unwrap_or(LogFormat::Default));
-        if let Some(files) = opt.max_log_files {
-            log_builder.max_log_files(files);
-        }
-        if let Some(files) = opt.max_archived_log_files {
-            log_builder.max_archived_log_files(files);
-        }
+        // if let Some(files) = opt.max_log_files {
+        //     log_builder.max_log_files(files);
+        // }
+        // if let Some(files) = opt.max_archived_log_files {
+        //     log_builder.max_archived_log_files(files);
+        // }
 
         log_builder.initialize()?
     };
@@ -563,15 +565,16 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
         // init logging in a separate runtime if we are sending traces to an opentelemetry server
         let rt = Runtime::new()?;
         let (reload_handle, log_appender_guard) = rt.block_on(async {
-            let mut log_builder = ant_logging::LogBuilder::new(logging_targets);
-            log_builder.output_dest(output_dest.clone());
+            let mut log_builder = ant_logging::LogBuilder::new(logging_targets)
+            .disable_file_rotation() // 新增：禁用文件轮转
+            .disable_archiving();    // 新增：禁用日志归档            log_builder.output_dest(output_dest.clone());
             log_builder.format(opt.log_format.unwrap_or(LogFormat::Default));
-            if let Some(files) = opt.max_log_files {
-                log_builder.max_log_files(files);
-            }
-            if let Some(files) = opt.max_archived_log_files {
-                log_builder.max_archived_log_files(files);
-            }
+            // if let Some(files) = opt.max_log_files {
+            //     log_builder.max_log_files(files);
+            // }
+            // if let Some(files) = opt.max_archived_log_files {
+            //     log_builder.max_archived_log_files(files);
+            // }
             log_builder.initialize()
         })?;
         (rt, reload_handle, log_appender_guard)
