@@ -66,7 +66,7 @@ impl Marker<'_> {
     pub fn log(&self) {
         // Down the line, if some logs are noisier than others, we can
         // match the type and log a different level.
-        info!("{self:?}");
+        // info!("{self:?}");
     }
 
     /// Helper to log the FetchingKeysForReplication variant

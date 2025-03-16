@@ -293,10 +293,10 @@ fn main() -> Result<()> {
     info!("\n{}\n{}", msg, "=".repeat(msg.len()));
 
     ant_build_info::log_version_info(env!("CARGO_PKG_VERSION"), &identify_protocol_str);
-    debug!(
-        "antnode built with git version: {}",
-        ant_build_info::git_info()
-    );
+    // debug!(
+    //     "antnode built with git version: {}",
+    //     ant_build_info::git_info()
+    // );
 
     info!(
         "Node started with bootstrap cache containing {} peers",
@@ -402,7 +402,7 @@ You can check your reward balance by running:
     tokio::spawn(async move {
         if let Err(err) = tokio::signal::ctrl_c().await {
             // I/O error, ignore/print the error, but continue to handle as if ctrl-c was received
-            warn!("Listening to ctrl-c error: {err}");
+            // warn!("Listening to ctrl-c error: {err}");
         }
         if let Err(err) = ctrl_tx_clone
             .send(NodeCtrl::Stop {
@@ -478,7 +478,7 @@ fn monitor_node_events(mut node_events_rx: NodeEventsReceiver, ctrl_tx: mpsc::Se
     let _handle = tokio::spawn(async move {
         loop {
             match node_events_rx.recv().await {
-                Ok(NodeEvent::ConnectedToNetwork) => Marker::NodeConnectedToNetwork.log(),
+                // Ok(NodeEvent::ConnectedToNetwork) => Marker::NodeConnectedToNetwork.log(),
                 Ok(NodeEvent::ChannelClosed) | Err(RecvError::Closed) => {
                     if let Err(err) = ctrl_tx
                         .send(NodeCtrl::Stop {
@@ -505,10 +505,10 @@ fn monitor_node_events(mut node_events_rx: NodeEventsReceiver, ctrl_tx: mpsc::Se
                 }
                 Ok(event) => {
                     /* we ignore other events */
-                    debug!("Currently ignored node event {event:?}");
+                    // debug!("Currently ignored node event {event:?}");
                 }
                 Err(RecvError::Lagged(n)) => {
-                    warn!("Skipped {n} node events!");
+                    // warn!("Skipped {n} node events!");
                     continue;
                 }
             }
@@ -518,24 +518,24 @@ fn monitor_node_events(mut node_events_rx: NodeEventsReceiver, ctrl_tx: mpsc::Se
 
 fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Option<WorkerGuard>)> {
     let logging_targets = vec![
-        ("ant_bootstrap".to_string(), Level::INFO),
-        ("ant_build_info".to_string(), Level::DEBUG),
-        ("ant_evm".to_string(), Level::DEBUG),
-        ("ant_logging".to_string(), Level::DEBUG),
-        ("ant_networking".to_string(), Level::INFO),
-        ("ant_node".to_string(), Level::DEBUG),
-        ("ant_protocol".to_string(), Level::DEBUG),
-        ("antnode".to_string(), Level::DEBUG),
-        ("evmlib".to_string(), Level::DEBUG),
+        ("ant_bootstrap".to_string(), Level::OFF), // 全部设置为 OFF
+        ("ant_build_info".to_string(), Level::OFF),
+        ("ant_evm".to_string(), Level::OFF),
+        ("ant_logging".to_string(), Level::OFF),
+        ("ant_networking".to_string(), Level::OFF),
+        ("ant_node".to_string(), Level::OFF),
+        ("ant_protocol".to_string(), Level::OFF),
+        ("antnode".to_string(), Level::OFF),
+        ("evmlib".to_string(), Level::OFF),
     ];
 
     let output_dest = match &opt.log_output_dest {
         LogOutputDestArg::Stdout => LogOutputDest::Stdout,
-        LogOutputDestArg::DataDir => {
-            let path = get_antnode_root_dir(peer_id)?.join("logs");
-            LogOutputDest::Path(path)
-        }
-        LogOutputDestArg::Path(path) => LogOutputDest::Path(path.clone()),
+        // LogOutputDestArg::DataDir => {
+        //     let path = get_antnode_root_dir(peer_id)?.join("logs");
+        //     LogOutputDest::Path(path)
+        // }
+        // LogOutputDestArg::Path(path) => LogOutputDest::Path(path.clone()),
     };
 
     #[cfg(not(feature = "otlp"))]
@@ -596,7 +596,7 @@ fn start_new_node_process(retain_peer_id: bool, root_dir: PathBuf, port: u16) {
         Some(s) => {
             // remove "(deleted)" string from current exe path
             if s.contains(" (deleted)") {
-                warn!("The current executable path contains ' (deleted)', which may lead to unexpected behavior. This has been removed from the exe location string");
+                // warn!("The current executable path contains ' (deleted)', which may lead to unexpected behavior. This has been removed from the exe location string");
                 s.replace(" (deleted)", "")
             } else {
                 s.to_string()
@@ -621,10 +621,10 @@ fn start_new_node_process(retain_peer_id: bool, root_dir: PathBuf, port: u16) {
         cmd.arg(port.to_string());
     }
 
-    warn!(
-        "Attempting to start a new process as node process loop has been broken: {:?}",
-        cmd
-    );
+    // warn!(
+    //     "Attempting to start a new process as node process loop has been broken: {:?}",
+    //     cmd
+    // );
     // Execute the command
     let _handle = match cmd.spawn() {
         Ok(status) => status,

@@ -48,11 +48,11 @@ impl AntNode for SafeNodeRpcService {
         &self,
         request: Request<NodeInfoRequest>,
     ) -> Result<Response<NodeInfoResponse>, Status> {
-        debug!(
-            "RPC request received at {}: {:?}",
-            self.addr,
-            request.get_ref()
-        );
+        // debug!(
+        //     "RPC request received at {}: {:?}",
+        //     self.addr,
+        //     request.get_ref()
+        // );
 
         let resp = Response::new(NodeInfoResponse {
             peer_id: self.running_node.peer_id().to_bytes(),
@@ -75,11 +75,11 @@ impl AntNode for SafeNodeRpcService {
         &self,
         request: Request<NetworkInfoRequest>,
     ) -> Result<Response<NetworkInfoResponse>, Status> {
-        debug!(
-            "RPC request received at {}: {:?}",
-            self.addr,
-            request.get_ref()
-        );
+        // debug!(
+        //     "RPC request received at {}: {:?}",
+        //     self.addr,
+        //     request.get_ref()
+        // );
 
         let state = self
             .running_node
@@ -101,11 +101,11 @@ impl AntNode for SafeNodeRpcService {
         &self,
         request: Request<NodeEventsRequest>,
     ) -> Result<Response<Self::NodeEventsStream>, Status> {
-        debug!(
-            "RPC request received at {}: {:?}",
-            self.addr,
-            request.get_ref()
-        );
+        // debug!(
+        //     "RPC request received at {}: {:?}",
+        //     self.addr,
+        //     request.get_ref()
+        // );
 
         let (client_tx, client_rx) = mpsc::channel(4);
 
@@ -115,9 +115,9 @@ impl AntNode for SafeNodeRpcService {
                 let event_bytes = match event.to_bytes() {
                     Ok(bytes) => bytes,
                     Err(err) => {
-                        debug!(
-                            "Error {err:?} while converting NodeEvent to bytes, ignoring the error"
-                        );
+                        // debug!(
+                        //     "Error {err:?} while converting NodeEvent to bytes, ignoring the error"
+                        // );
                         continue;
                     }
                 };
@@ -125,10 +125,10 @@ impl AntNode for SafeNodeRpcService {
                 let event = NodeEvent { event: event_bytes };
 
                 if let Err(err) = client_tx.send(Ok(event)).await {
-                    debug!(
-                        "Dropping stream sender to RPC client due to failure in \
-                        last attempt to notify an event: {err}"
-                    );
+                    // debug!(
+                    //     "Dropping stream sender to RPC client due to failure in \
+                    //     last attempt to notify an event: {err}"
+                    // );
                     break;
                 }
             }
@@ -141,11 +141,11 @@ impl AntNode for SafeNodeRpcService {
         &self,
         request: Request<RecordAddressesRequest>,
     ) -> Result<Response<RecordAddressesResponse>, Status> {
-        debug!(
-            "RPC request received at {}: {:?}",
-            self.addr,
-            request.get_ref()
-        );
+        // debug!(
+        //     "RPC request received at {}: {:?}",
+        //     self.addr,
+        //     request.get_ref()
+        // );
 
         let addresses = self
             .running_node
@@ -163,11 +163,11 @@ impl AntNode for SafeNodeRpcService {
         &self,
         request: Request<KBucketsRequest>,
     ) -> Result<Response<KBucketsResponse>, Status> {
-        debug!(
-            "RPC request received at {}: {:?}",
-            self.addr,
-            request.get_ref()
-        );
+        // debug!(
+        //     "RPC request received at {}: {:?}",
+        //     self.addr,
+        //     request.get_ref()
+        // );
 
         let kbuckets: HashMap<u32, k_buckets_response::Peers> = self
             .running_node
@@ -186,11 +186,11 @@ impl AntNode for SafeNodeRpcService {
     }
 
     async fn stop(&self, request: Request<StopRequest>) -> Result<Response<StopResponse>, Status> {
-        debug!(
-            "RPC request received at {}: {:?}",
-            self.addr,
-            request.get_ref()
-        );
+        // debug!(
+        //     "RPC request received at {}: {:?}",
+        //     self.addr,
+        //     request.get_ref()
+        // );
 
         let cause = if let Some(addr) = request.remote_addr() {
             ErrReport::msg(format!(
@@ -221,11 +221,11 @@ impl AntNode for SafeNodeRpcService {
         &self,
         request: Request<RestartRequest>,
     ) -> Result<Response<RestartResponse>, Status> {
-        debug!(
-            "RPC request received at {}: {:?}",
-            self.addr,
-            request.get_ref()
-        );
+        // debug!(
+        //     "RPC request received at {}: {:?}",
+        //     self.addr,
+        //     request.get_ref()
+        // );
 
         let delay = Duration::from_millis(request.get_ref().delay_millis);
         match self
@@ -248,11 +248,11 @@ impl AntNode for SafeNodeRpcService {
         &self,
         request: Request<UpdateRequest>,
     ) -> Result<Response<UpdateResponse>, Status> {
-        debug!(
-            "RPC request received at {}: {:?}",
-            self.addr,
-            request.get_ref()
-        );
+        // debug!(
+        //     "RPC request received at {}: {:?}",
+        //     self.addr,
+        //     request.get_ref()
+        // );
 
         let delay = Duration::from_millis(request.get_ref().delay_millis);
         match self.ctrl_tx.send(NodeCtrl::Update(delay)).await {
@@ -268,11 +268,11 @@ impl AntNode for SafeNodeRpcService {
         &self,
         request: Request<UpdateLogLevelRequest>,
     ) -> Result<Response<UpdateLogLevelResponse>, Status> {
-        debug!(
-            "RPC request received at {}: {:?}",
-            self.addr,
-            request.get_ref()
-        );
+        // debug!(
+        //     "RPC request received at {}: {:?}",
+        //     self.addr,
+        //     request.get_ref()
+        // );
 
         match self
             .log_reload_handle
@@ -304,8 +304,8 @@ pub(crate) fn start_rpc_service(
         started_instant,
         log_reload_handle,
     };
-    info!("RPC Server listening on {addr}");
-    println!("RPC Server listening on {addr}");
+    // info!("RPC Server listening on {addr}");
+    // println!("RPC Server listening on {addr}");
 
     let _handle = tokio::spawn(async move {
         // adding our service to our server.
@@ -314,7 +314,7 @@ pub(crate) fn start_rpc_service(
             .serve(addr)
             .await
         {
-            error!("RPC Server failed to start: {e:?}");
+            // error!("RPC Server failed to start: {e:?}");
         }
     });
 }

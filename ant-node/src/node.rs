@@ -761,9 +761,9 @@ impl Node {
             (_, Some(value)) => {
                 let distance = U256::from_big_endian(&value);
                 peer_addrs
-                    .iter()
+                    .into_iter()
                     .filter_map(|(peer_id, multi_addrs)| {
-                        let addr = NetworkAddress::from_peer(*peer_id);
+                        let addr = NetworkAddress::from_peer(peer_id);
                         if target.distance(&addr).0 <= distance {
                             Some((addr, multi_addrs.clone()))
                         } else {
@@ -911,13 +911,13 @@ impl Node {
         verify_candidates.sort_by_key(|addr| target.distance(addr));
         let expected_targets = verify_candidates.into_iter().take(difficulty);
         let nonce: Nonce = thread_rng().gen::<u64>();
-        let mut expected_proofs = HashMap::new();
+        let mut expected_proofs = HashMap::with_capacity(difficulty); // 预分配容量
         for addr in expected_targets {
             if let Ok(Some(record)) = network.get_local_record(&addr.to_record_key()).await {
                 let expected_proof = ChunkProof::new(&record.value, nonce);
                 let _ = expected_proofs.insert(addr, expected_proof);
             } else {
-                error!("Local record {addr:?} cann't be loaded from disk.");
+                // error!("Local record {addr:?} cann't be loaded from disk.");
             }
         }
         let request = Request::Query(Query::GetChunkExistenceProof {
@@ -926,7 +926,7 @@ impl Node {
             difficulty,
         });
 
-        let mut tasks = JoinSet::new();
+        let mut tasks = JoinSet::with_capacity(CLOSE_GROUP_SIZE); 
         for (peer_id, addresses) in closest_peers {
             if peer_id == network.peer_id() {
                 continue;
@@ -1098,7 +1098,7 @@ fn challenge_score_scheme(
             if expected_proof.verify(&chunk_proof) {
                 correct_answers += 1;
             } else {
-                info!("Spot a false answer to the challenge regarding {addr:?}");
+                // info!("Spot a false answer to the challenge regarding {addr:?}");
                 // Any false answer shall result in 0 score immediately
                 return 0;
             }
