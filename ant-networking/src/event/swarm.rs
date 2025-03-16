@@ -425,10 +425,10 @@ impl SwarmDriver {
                     }
                     DialError::LocalPeerId { endpoint, .. } => {
                         // This is actually _us_ So we should remove this from the RT
-                        error!(
-                            "OutgoingConnectionError: LocalPeerId: {}",
-                            endpoint_str(&endpoint)
-                        );
+                        // error!(
+                        //     "OutgoingConnectionError: LocalPeerId: {}",
+                        //     endpoint_str(&endpoint)
+                        // );
                         true
                     }
                     DialError::WrongPeerId { obtained, endpoint } => {
@@ -440,7 +440,7 @@ impl SwarmDriver {
                     DialError::Denied { cause } => {
                         // The peer denied our connection
                         // cleanup
-                        error!("OutgoingConnectionError: Denied: {cause:?}");
+                        // error!("OutgoingConnectionError: Denied: {cause:?}");
                         true
                     }
                 };
@@ -475,7 +475,7 @@ impl SwarmDriver {
                 // And since we don't do anything critical with this event, the order and time of processing is
                 // not critical.
                 if self.is_incoming_connection_error_valid(connection_id, &send_back_addr) {
-                    error!("IncomingConnectionError Valid from local_addr:?{local_addr:?}, send_back_addr {send_back_addr:?} on {connection_id:?} with error {error:?}");
+                    // error!("IncomingConnectionError Valid from local_addr:?{local_addr:?}, send_back_addr {send_back_addr:?} on {connection_id:?} with error {error:?}");
 
                     // This is best approximation that we can do to prevent harmless errors from affecting the external
                     // address health.

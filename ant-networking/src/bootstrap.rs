@@ -155,22 +155,22 @@ impl InitialBootstrap {
                         warn!("Failed to dial peer with address: {addr_clone}. This is our own peer ID. Dialing the next peer");
                     }
                     DialError::NoAddresses => {
-                        error!("Failed to dial peer with address: {addr_clone}. No addresses found. Dialing the next peer");
+                        // error!("Failed to dial peer with address: {addr_clone}. No addresses found. Dialing the next peer");
                     }
                     DialError::DialPeerConditionFalse(_) => {
                         warn!("We are already dialing the peer with address: {addr_clone}. Dialing the next peer. This error is harmless.");
                     }
                     DialError::Aborted => {
-                        error!(" Pending connection attempt has been aborted for {addr_clone}. Dialing the next peer.");
+                        // error!(" Pending connection attempt has been aborted for {addr_clone}. Dialing the next peer.");
                     }
                     DialError::WrongPeerId { obtained, .. } => {
-                        error!("The peer identity obtained on the connection did not match the one that was expected. Expected: {peer_id:?}, obtained: {obtained}. Dialing the next peer.");
+                        // error!("The peer identity obtained on the connection did not match the one that was expected. Expected: {peer_id:?}, obtained: {obtained}. Dialing the next peer.");
                     }
                     DialError::Denied { cause } => {
-                        error!("The dialing attempt was denied by the remote peer. Cause: {cause}. Dialing the next peer.");
+                        // error!("The dialing attempt was denied by the remote peer. Cause: {cause}. Dialing the next peer.");
                     }
                     DialError::Transport(items) => {
-                        error!("Failed to dial peer with address: {addr_clone}. Transport error: {items:?}. Dialing the next peer.");
+                        // error!("Failed to dial peer with address: {addr_clone}. Transport error: {items:?}. Dialing the next peer.");
                     }
                 },
             }

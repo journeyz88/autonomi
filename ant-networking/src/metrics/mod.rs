@@ -337,7 +337,7 @@ impl NetworkMetricsRecorder {
                         .send(BadNodeMetricsMsg::ShunnedByPeer(flagged_by))
                         .await
                     {
-                        error!("Failed to send shunned report via notifier: {err:?}");
+                        // error!("Failed to send shunned report via notifier: {err:?}");
                     }
                 });
             }
@@ -368,7 +368,7 @@ impl NetworkMetricsRecorder {
                 .send(BadNodeMetricsMsg::CloseGroupUpdated(new_close_group))
                 .await
             {
-                error!("Failed to send shunned report via notifier: {err:?}");
+                // error!("Failed to send shunned report via notifier: {err:?}");
             }
         });
     }

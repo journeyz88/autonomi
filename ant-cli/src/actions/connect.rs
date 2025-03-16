@@ -50,7 +50,7 @@ pub async fn connect_to_network_with_config(
             Ok(client)
         }
         Err(e) => {
-            error!("Failed to connect to the network: {e}");
+            // error!("Failed to connect to the network: {e}");
             progress_bar.finish_with_message("Failed to connect to the network");
             bail!("Failed to connect to the network: {e}")
         }

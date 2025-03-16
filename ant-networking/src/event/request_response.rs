@@ -80,7 +80,7 @@ impl SwarmDriver {
                             let (Some(detected_by), Some(bad_peer)) =
                                 (detected_by.as_peer_id(), bad_peer.as_peer_id())
                             else {
-                                error!("Could not get PeerId from detected_by or bad_peer NetworkAddress {detected_by:?}, {bad_peer:?}");
+                                // error!("Could not get PeerId from detected_by or bad_peer NetworkAddress {detected_by:?}, {bad_peer:?}");
                                 return Ok(());
                             };
 
@@ -90,7 +90,7 @@ impl SwarmDriver {
                                     flagged_by: &detected_by,
                                 });
                             } else {
-                                error!("Received a bad_peer notification from {detected_by:?}, targeting {bad_peer:?}, which is not us.");
+                                // error!("Received a bad_peer notification from {detected_by:?}, targeting {bad_peer:?}, which is not us.");
                             }
                         }
                         Request::Query(query) => {

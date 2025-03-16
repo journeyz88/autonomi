@@ -39,7 +39,7 @@ pub(crate) fn run_metrics_server(registries: MetricsRegistries, port: u16) {
         info!("Metrics server on http://{} Available endpoints: /metrics, /metrics_extended, /metadata", server.local_addr());
         // run the server forever
         if let Err(e) = server.await {
-            error!("server error: {}", e);
+            // error!("server error: {}", e);
         }
     });
 }
@@ -78,7 +78,7 @@ impl MetricService {
         let reg = self.get_standard_metrics_registry();
         let reg = reg.lock().map_err(|_| NetworkError::NetworkMetricError)?;
         encode(&mut response.body_mut(), &reg).map_err(|err| {
-            error!("Failed to encode the standard metrics Registry {err:?}");
+            // error!("Failed to encode the standard metrics Registry {err:?}");
             NetworkError::NetworkMetricError
         })?;
 
@@ -102,7 +102,7 @@ impl MetricService {
             .lock()
             .map_err(|_| NetworkError::NetworkMetricError)?;
         encode(&mut response.body_mut(), &standard_registry).map_err(|err| {
-            error!("Failed to encode the standard metrics Registry {err:?}");
+            // error!("Failed to encode the standard metrics Registry {err:?}");
             NetworkError::NetworkMetricError
         })?;
 
@@ -120,7 +120,7 @@ impl MetricService {
             .lock()
             .map_err(|_| NetworkError::NetworkMetricError)?;
         encode(&mut response.body_mut(), &extended_registry).map_err(|err| {
-            error!("Failed to encode the standard metrics Registry {err:?}");
+            // error!("Failed to encode the standard metrics Registry {err:?}");
             NetworkError::NetworkMetricError
         })?;
 
@@ -143,7 +143,7 @@ impl MetricService {
         let reg = self.get_metadata_registry();
         let reg = reg.lock().map_err(|_| NetworkError::NetworkMetricError)?;
         encode(&mut response.body_mut(), &reg).map_err(|err| {
-            error!("Failed to encode the metadata Registry {err:?}");
+            // error!("Failed to encode the metadata Registry {err:?}");
             NetworkError::NetworkMetricError
         })?;
 

@@ -383,7 +383,7 @@ impl SwarmDriver {
                 kbucket_table_stats.push((index, num_entires, distance));
             } else {
                 // This shall never happen.
-                error!("bucket #{index:?} is ourself ???!!!");
+                // error!("bucket #{index:?} is ourself ???!!!");
             }
             index += 1;
         }
