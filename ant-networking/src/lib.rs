@@ -401,7 +401,7 @@ impl Network {
         );
 
         if close_nodes.is_empty() {
-            error!("Can't get store_cost of {record_address:?}, as all close_nodes are ignored");
+            // error!("Can't get store_cost of {record_address:?}, as all close_nodes are ignored");
             return Err(NetworkError::NotEnoughPeersForStoreCostRequest);
         }
 
@@ -469,21 +469,21 @@ impl Network {
                     }
                 }
                 Err(err) => {
-                    error!("Got an error while requesting quote from peer {peer:?}: {err:?}");
+                    // error!("Got an error while requesting quote from peer {peer:?}: {err:?}");
                     peers_returned_error += 1;
                 }
                 _ => {
-                    error!("Got an unexpected response while requesting quote from peer {peer:?}: {response:?}");
+                    // error!("Got an unexpected response while requesting quote from peer {peer:?}: {response:?}");
                     peers_returned_error += 1;
                 }
             }
         }
 
         if quotes_to_pay.is_empty() {
-            error!(
-                "Could not fetch any quotes. {} peers returned an error.",
-                peers_returned_error
-            );
+            // error!(
+            //     "Could not fetch any quotes. {} peers returned an error.",
+            //     peers_returned_error
+            // );
             return Err(NetworkError::NoStoreCostResponses);
         }
 
@@ -515,9 +515,9 @@ impl Network {
             let result = match receiver.await {
                 Ok(result) => result,
                 Err(err) => {
-                    error!(
-                        "When fetching record {pretty_key:?}, encountered a channel error {err:?}"
-                    );
+                    // error!(
+                    //     "When fetching record {pretty_key:?}, encountered a channel error {err:?}"
+                    // );
                     // Do not attempt retries.
                     return Err(NetworkError::InternalMsgChannelDropped);
                 }
@@ -547,17 +547,17 @@ impl Network {
                 }
                 // This is returned during SplitRecordError, we should not get this error here.
                 GetRecordError::RecordKindMismatch => {
-                    error!("Record kind mismatch for {pretty_key:?}. This error should not happen here.");
+                    // error!("Record kind mismatch for {pretty_key:?}. This error should not happen here.");
                 }
                 GetRecordError::SplitRecord { result_map } => {
-                    error!("Encountered a split record for {pretty_key:?}.");
+                    // error!("Encountered a split record for {pretty_key:?}.");
                     if let Some(record) = Self::handle_split_record_error(result_map, &key)? {
                         info!("Merged the split record for {pretty_key:?}, into a single record");
                         return Ok(record);
                     }
                 }
                 GetRecordError::QueryTimeout => {
-                    error!("Encountered query timeout for {pretty_key:?}.");
+                    // error!("Encountered query timeout for {pretty_key:?}.");
                 }
             }
 
@@ -595,13 +595,13 @@ impl Network {
                 // FIXME: the first record dictates the kind, but we should check all records are of the same kind.
                 // And somehow discard the incorrect ones.
                 if *kind != header.kind {
-                    error!("Encountered a split record for {pretty_key:?} with different RecordHeaders. Expected {kind:?} but got {:?}. Skipping",header.kind);
+                    // error!("Encountered a split record for {pretty_key:?} with different RecordHeaders. Expected {kind:?} but got {:?}. Skipping",header.kind);
                     continue;
                 }
 
                 match kind {
                     RecordKind::DataOnly(DataTypes::Chunk) | RecordKind::DataWithPayment(_) => {
-                        error!("Encountered a split record for {pretty_key:?} with unexpected RecordKind {kind:?}, skipping.");
+                        // error!("Encountered a split record for {pretty_key:?} with unexpected RecordKind {kind:?}, skipping.");
                         continue;
                     }
                     RecordKind::DataOnly(DataTypes::GraphEntry) => {
@@ -619,9 +619,9 @@ impl Network {
                     RecordKind::DataOnly(DataTypes::Pointer) => {
                         info!("For record {pretty_key:?}, we have a split record for a pointer. Selecting the one with the highest count");
                         let Ok(pointer) = try_deserialize_record::<Pointer>(record) else {
-                            error!(
-                                "Failed to deserialize pointer {pretty_key}. Skipping accumulation"
-                            );
+                            // error!(
+                            //     "Failed to deserialize pointer {pretty_key}. Skipping accumulation"
+                            // );
                             continue;
                         };
 
@@ -641,9 +641,9 @@ impl Network {
                     RecordKind::DataOnly(DataTypes::Scratchpad) => {
                         info!("For record {pretty_key:?}, we have a split record for a scratchpad. Selecting the one with the highest count");
                         let Ok(scratchpad) = try_deserialize_record::<Scratchpad>(record) else {
-                            error!(
-                                "Failed to deserialize scratchpad {pretty_key}. Skipping accumulation"
-                            );
+                            // error!(
+                            //     "Failed to deserialize scratchpad {pretty_key}. Skipping accumulation"
+                            // );
                             continue;
                         };
 
@@ -676,9 +676,9 @@ impl Network {
                 key: key.clone(),
                 value: try_serialize_record(&accumulated_graphentries, RecordKind::DataOnly(DataTypes::GraphEntry))
                     .map_err(|err| {
-                        error!(
-                            "Error while serializing the accumulated GraphEntries for {pretty_key:?}: {err:?}"
-                        );
+                        // error!(
+                        //     "Error while serializing the accumulated GraphEntries for {pretty_key:?}: {err:?}"
+                        // );
                         NetworkError::from(err)
                     })?
                     .to_vec(),
@@ -691,7 +691,7 @@ impl Network {
             let record_value =
                 try_serialize_record(&pointer, RecordKind::DataOnly(DataTypes::Pointer))
                     .map_err(|err| {
-                        error!("Error while serializing the pointer for {pretty_key:?}: {err:?}");
+                        // error!("Error while serializing the pointer for {pretty_key:?}: {err:?}");
                         NetworkError::from(err)
                     })?
                     .to_vec();
@@ -708,9 +708,9 @@ impl Network {
             let record_value =
                 try_serialize_record(&scratchpad, RecordKind::DataOnly(DataTypes::Scratchpad))
                     .map_err(|err| {
-                        error!(
-                            "Error while serializing the scratchpad for {pretty_key:?}: {err:?}"
-                        );
+                        // error!(
+                        //     "Error while serializing the scratchpad for {pretty_key:?}: {err:?}"
+                        // );
                         NetworkError::from(err)
                     })?
                     .to_vec();
@@ -987,7 +987,7 @@ impl Network {
 
                     r = receiver.await?;
                     if let Err(error) = &r {
-                        error!("Reattempt of {req_str} led to an error again (even after dialing). {error:?}");
+                        // error!("Reattempt of {req_str} led to an error again (even after dialing). {error:?}");
                     }
                 }
                 _ => {
@@ -1239,16 +1239,16 @@ pub(crate) fn send_local_swarm_cmd(swarm_cmd_sender: Sender<LocalSwarmCmd>, cmd:
     let capacity = swarm_cmd_sender.capacity();
 
     if capacity == 0 {
-        error!(
-            "SwarmCmd channel is full. Await capacity to send: {:?}",
-            cmd
-        );
+        // error!(
+        //     "SwarmCmd channel is full. Await capacity to send: {:?}",
+        //     cmd
+        // );
     }
 
     // Spawn a task to send the SwarmCmd and keep this fn sync
     let _handle = spawn(async move {
         if let Err(error) = swarm_cmd_sender.send(cmd).await {
-            error!("Failed to send SwarmCmd: {}", error);
+            // error!("Failed to send SwarmCmd: {}", error);
         }
     });
 }
@@ -1260,16 +1260,16 @@ pub(crate) fn send_network_swarm_cmd(
     let capacity = swarm_cmd_sender.capacity();
 
     if capacity == 0 {
-        error!(
-            "SwarmCmd channel is full. Await capacity to send: {:?}",
-            cmd
-        );
+        // error!(
+        //     "SwarmCmd channel is full. Await capacity to send: {:?}",
+        //     cmd
+        // );
     }
 
     // Spawn a task to send the SwarmCmd and keep this fn sync
     let _handle = spawn(async move {
         if let Err(error) = swarm_cmd_sender.send(cmd).await {
-            error!("Failed to send SwarmCmd: {}", error);
+            // error!("Failed to send SwarmCmd: {}", error);
         }
     });
 }

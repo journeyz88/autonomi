@@ -230,7 +230,7 @@ impl ExternalAddressManager {
         // only add our global addresses
         let address = if multiaddr_is_global(&listen_addr) {
             let Some(address) = self.craft_external_address(&listen_addr) else {
-                error!("Listen address is ill formed, not added to manager: {listen_addr:?}");
+                // error!("Listen address is ill formed, not added to manager: {listen_addr:?}");
                 return;
             };
             address
@@ -306,7 +306,7 @@ impl ExternalAddressManager {
     pub fn on_expired_listen_addr(&mut self, listen_addr: Multiaddr, swarm: &Swarm<NodeBehaviour>) {
         let address = if multiaddr_is_global(&listen_addr) {
             let Some(address) = self.craft_external_address(&listen_addr) else {
-                error!("Listen address is ill formed, ignoring {listen_addr:?}");
+                // error!("Listen address is ill formed, ignoring {listen_addr:?}");
                 return;
             };
             address

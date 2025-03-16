@@ -722,9 +722,9 @@ impl NodeRecordStore {
             let data_type = match RecordHeader::get_data_type(&r) {
                 Ok(data_type) => data_type,
                 Err(err) => {
-                    error!(
-                        "Error get data_type of record {record_key2:?} filename: {filename}, error: {err:?}"
-                    );
+                    // error!(
+                    //     "Error get data_type of record {record_key2:?} filename: {filename}, error: {err:?}"
+                    // );
                     return;
                 }
             };
@@ -741,9 +741,9 @@ impl NodeRecordStore {
                         }
                     }
                     Err(err) => {
-                        error!(
-                        "Error writing record {record_key2:?} filename: {filename}, error: {err:?}"
-                    );
+                    //     error!(
+                    //     "Error writing record {record_key2:?} filename: {filename}, error: {err:?}"
+                    // );
                         LocalSwarmCmd::RemoveFailedLocalRecord { key }
                     }
                 };

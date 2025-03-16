@@ -488,13 +488,13 @@ impl SwarmDriver {
                         Ok(())
                     }
                     Err(error) => {
-                        error!("Error sending record {record_key:?} to network");
+                        // error!("Error sending record {record_key:?} to network");
                         Err(NetworkError::from(error))
                     }
                 };
 
                 if let Err(err) = sender.send(res) {
-                    error!("Could not send response to PutRecord cmd: {:?}", err);
+                    // error!("Could not send response to PutRecord cmd: {:?}", err);
                 }
             }
             NetworkSwarmCmd::PutRecordTo {
@@ -518,7 +518,7 @@ impl SwarmDriver {
                 debug!("Sent record {record_key:?} to {peers_count:?} peers. Request id: {request_id:?}");
 
                 if let Err(err) = sender.send(Ok(())) {
-                    error!("Could not send response to PutRecordTo cmd: {:?}", err);
+                    // error!("Could not send response to PutRecordTo cmd: {:?}", err);
                 }
             }
             NetworkSwarmCmd::GetClosestPeersToAddressFromNetwork { key, sender } => {
@@ -576,7 +576,7 @@ impl SwarmDriver {
                                     info!("Dialing peer {peer:?} for req_resp with address: {addrs:?}",);
                                 }
                                 Err(err) => {
-                                    error!("Failed to dial peer {peer:?} for req_resp with address: {addrs:?} error: {err}",);
+                                    // error!("Failed to dial peer {peer:?} for req_resp with address: {addrs:?} error: {err}",);
                                 }
                             }
                         }
@@ -634,7 +634,7 @@ impl SwarmDriver {
                         info!("Manual dialing peer {peer:?} with address: {addrs:?}",);
                     }
                     Err(err) => {
-                        error!("Failed to manual dial peer {peer:?} with address: {addrs:?} error: {err}",);
+                        // error!("Failed to manual dial peer {peer:?} with address: {addrs:?} error: {err}",);
                     }
                 }
             }
@@ -755,13 +755,13 @@ impl SwarmDriver {
                                 ValidationType::NonChunk(content_hash)
                             }
                             RecordKind::DataWithPayment(_) => {
-                                error!("Record {record_key:?} with payment shall not be stored locally.");
+                                // error!("Record {record_key:?} with payment shall not be stored locally.");
                                 return Err(NetworkError::InCorrectRecordHeader);
                             }
                         }
                     }
                     Err(err) => {
-                        error!("For record {record_key:?}, failed to parse record_header {err:?}");
+                        // error!("For record {record_key:?}, failed to parse record_header {err:?}");
                         return Err(NetworkError::InCorrectRecordHeader);
                     }
                 };
@@ -825,7 +825,7 @@ impl SwarmDriver {
                 }
 
                 if let Err(err) = result {
-                    error!("Can't store verified record {record_key:?} locally: {err:?}");
+                    // error!("Can't store verified record {record_key:?} locally: {err:?}");
                     cmd_string = "PutLocalRecord error";
                     self.log_handling(cmd_string.to_string(), start.elapsed());
                     return Err(err.into());
@@ -892,7 +892,7 @@ impl SwarmDriver {
                         let _ = ilog2_kbuckets.insert(distance, peers_in_kbucket);
                     } else {
                         // This shall never happen.
-                        error!("bucket is ourself ???!!!");
+                        // error!("bucket is ourself ???!!!");
                     }
                 }
                 let _ = sender.send(ilog2_kbuckets);
@@ -1133,11 +1133,11 @@ impl SwarmDriver {
                                 .send(LocalSwarmCmd::AddPeerToBlockList { peer_id })
                                 .await
                             {
-                                error!("SwarmDriver failed to send LocalSwarmCmd: {err}");
+                                // error!("SwarmDriver failed to send LocalSwarmCmd: {err}");
                             }
                         }
                         Err(err) => {
-                            error!("Failed to get response from one shot channel for Cmd::PeerConsideredAsBad : {err:?}");
+                            // error!("Failed to get response from one shot channel for Cmd::PeerConsideredAsBad : {err:?}");
                         }
                     }
                 });

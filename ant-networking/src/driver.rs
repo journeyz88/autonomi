@@ -928,7 +928,7 @@ impl SwarmDriver {
                     let new = match BootstrapCacheStore::new(config) {
                         Ok(new) => new,
                         Err(err) => {
-                            error!("Failed to create a new empty cache: {err}");
+                            // error!("Failed to create a new empty cache: {err}");
                             continue;
                         }
                     };
@@ -937,7 +937,7 @@ impl SwarmDriver {
                     // save the cache to disk
                     spawn(async move {
                         if let Err(err) = old_cache.sync_and_flush_to_disk(true) {
-                            error!("Failed to save bootstrap cache: {err}");
+                            // error!("Failed to save bootstrap cache: {err}");
                         }
                     });
 
@@ -983,7 +983,7 @@ impl SwarmDriver {
                 );
             }
             if let Err(error) = event_sender.send(event).await {
-                error!("SwarmDriver failed to send event: {}", error);
+                // error!("SwarmDriver failed to send event: {}", error);
             }
         });
     }
@@ -1003,7 +1003,7 @@ impl SwarmDriver {
                 );
             }
             if let Err(error) = event_sender.send(event).await {
-                error!("SwarmDriver failed to send event: {}", error);
+                // error!("SwarmDriver failed to send event: {}", error);
             }
         });
     }
