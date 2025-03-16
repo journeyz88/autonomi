@@ -926,7 +926,7 @@ impl Node {
             difficulty,
         });
 
-        let mut tasks = JoinSet::with_capacity(CLOSE_GROUP_SIZE); 
+        let mut tasks = JoinSet::new();
         for (peer_id, addresses) in closest_peers {
             if peer_id == network.peer_id() {
                 continue;
