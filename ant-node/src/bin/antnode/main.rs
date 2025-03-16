@@ -546,8 +546,6 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
     #[cfg(not(feature = "otlp"))]
     let (reload_handle, log_appender_guard) = {
         let mut log_builder = ant_logging::LogBuilder::new(logging_targets)
-            .disable_file_rotation() // 新增：禁用文件轮转
-            .disable_archiving();    // 新增：禁用日志归档
         log_builder.output_dest(output_dest.clone());
         log_builder.format(opt.log_format.unwrap_or(LogFormat::Default));
         // if let Some(files) = opt.max_log_files {
@@ -556,6 +554,9 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
         // if let Some(files) = opt.max_archived_log_files {
         //     log_builder.max_archived_log_files(files);
         // }
+        // 显式设置文件数量为0来禁用文件日志
+        log_builder.max_log_files(0);
+        log_builder.max_archived_log_files(0);
 
         log_builder.initialize()?
     };
@@ -566,8 +567,7 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
         let rt = Runtime::new()?;
         let (reload_handle, log_appender_guard) = rt.block_on(async {
             let mut log_builder = ant_logging::LogBuilder::new(logging_targets)
-            .disable_file_rotation() // 新增：禁用文件轮转
-            .disable_archiving();    // 新增：禁用日志归档            log_builder.output_dest(output_dest.clone());
+            log_builder.output_dest(output_dest.clone());
             log_builder.format(opt.log_format.unwrap_or(LogFormat::Default));
             // if let Some(files) = opt.max_log_files {
             //     log_builder.max_log_files(files);
@@ -575,6 +575,10 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
             // if let Some(files) = opt.max_archived_log_files {
             //     log_builder.max_archived_log_files(files);
             // }
+                    // 显式设置文件数量为0来禁用文件日志
+            log_builder.max_log_files(0);
+            log_builder.max_archived_log_files(0);
+
             log_builder.initialize()
         })?;
         (rt, reload_handle, log_appender_guard)
