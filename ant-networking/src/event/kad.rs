@@ -84,7 +84,7 @@ impl SwarmDriver {
                 ref step,
             } => {
                 event_string = "kad_event::get_closest_peers_err";
-                error!("GetClosest Query task {id:?} errored with {err:?}, {stats:?} - {step:?}");
+                // error!("GetClosest Query task {id:?} errored with {err:?}, {stats:?} - {step:?}");
 
                 let (get_closest_type, mut current_closest) =
                     self.pending_get_closest_peers.remove(&id).ok_or_else(|| {
@@ -216,8 +216,8 @@ impl SwarmDriver {
                         (key, success, quorum)
                     }
                 };
-                error!("Query task {id:?} failed put record {:?} {:?}, required quorum {quorum}, stored on {success:?}, {stats:?} - {step:?}",
-                       PrettyPrintRecordKey::from(key), event_string);
+                // error!("Query task {id:?} failed put record {:?} {:?}, required quorum {quorum}, stored on {success:?}, {stats:?} - {step:?}",
+                //        PrettyPrintRecordKey::from(key), event_string);
             }
             kad::Event::OutboundQueryProgressed {
                 id,

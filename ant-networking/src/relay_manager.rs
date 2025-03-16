@@ -213,7 +213,7 @@ impl RelayManager {
                         n_reservations += 1;
                     }
                     Err(err) => {
-                        error!("Error while trying to listen on the relay addr: {err:?} on {relay_addr:?}");
+                        // error!("Error while trying to listen on the relay addr: {err:?} on {relay_addr:?}");
                     }
                 }
             } else {
