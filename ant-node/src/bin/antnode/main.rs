@@ -554,9 +554,6 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
         // if let Some(files) = opt.max_archived_log_files {
         //     log_builder.max_archived_log_files(files);
         // }
-        // 显式设置文件数量为0来禁用文件日志
-        log_builder.max_log_files(0);
-        log_builder.max_archived_log_files(0);
 
         log_builder.initialize()?
     };
@@ -575,9 +572,6 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
             // if let Some(files) = opt.max_archived_log_files {
             //     log_builder.max_archived_log_files(files);
             // }
-                    // 显式设置文件数量为0来禁用文件日志
-            log_builder.max_log_files(0);
-            log_builder.max_archived_log_files(0);
 
             log_builder.initialize()
         })?;
