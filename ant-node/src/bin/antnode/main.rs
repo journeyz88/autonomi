@@ -539,7 +539,8 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
     //     LogOutputDestArg::Path(path) => LogOutputDest::Path(path.clone()),
     // };
     // 强制所有日志输出到标准输出
-    let output_dest = LogOutputDest::Path(PathBuf::from("/dev/null")); // Linux/MacOS
+    // 使用内存中的虚拟路径避免文件系统操作
+    let output_dest = LogOutputDest::Path(PathBuf::from("/dev/null").join("antnode.log")); // 虚拟文件路径
 
     #[cfg(not(feature = "otlp"))]
     let (reload_handle, log_appender_guard) = {
