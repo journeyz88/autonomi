@@ -517,30 +517,26 @@ fn monitor_node_events(mut node_events_rx: NodeEventsReceiver, ctrl_tx: mpsc::Se
 }
 
 fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Option<WorkerGuard>)> {
-    let logging_targets = vec![
-        ("ant_bootstrap".to_string(), Level::OFF), // 全部设置为 OFF
-        ("ant_build_info".to_string(), Level::OFF),
-        ("ant_evm".to_string(), Level::OFF),
-        ("ant_logging".to_string(), Level::OFF),
-        ("ant_networking".to_string(), Level::OFF),
-        ("ant_node".to_string(), Level::OFF),
-        ("ant_protocol".to_string(), Level::OFF),
-        ("antnode".to_string(), Level::OFF),
-        ("evmlib".to_string(), Level::OFF),
-    ];
+    // 创建空日志目标列表
+    let logging_targets = vec![];
 
+    // 设置全局日志过滤器为 OFF
+    let filter = tracing_subscriber::filter::LevelFilter::OFF;
+    
     let output_dest = match &opt.log_output_dest {
         LogOutputDestArg::Stdout => LogOutputDest::Stdout,
-        // LogOutputDestArg::DataDir => {
-        //     let path = get_antnode_root_dir(peer_id)?.join("logs");
-        //     LogOutputDest::Path(path)
-        // }
-        // LogOutputDestArg::Path(path) => LogOutputDest::Path(path.clone()),
+        LogOutputDestArg::DataDir => {
+            let path = get_antnode_root_dir(peer_id)?.join("logs");
+            LogOutputDest::Path(path)
+        }
+        LogOutputDestArg::Path(path) => LogOutputDest::Path(path.clone()),
     };
 
     #[cfg(not(feature = "otlp"))]
     let (reload_handle, log_appender_guard) = {
-        let mut log_builder = ant_logging::LogBuilder::new(logging_targets);
+        let mut log_builder = ant_logging::LogBuilder::new(logging_targets)
+            .filter(filter); // 应用全局过滤器
+
         log_builder.output_dest(output_dest.clone());
         log_builder.format(opt.log_format.unwrap_or(LogFormat::Default));
         if let Some(files) = opt.max_log_files {
@@ -555,10 +551,11 @@ fn init_logging(opt: &Opt, peer_id: PeerId) -> Result<(String, ReloadHandle, Opt
 
     #[cfg(feature = "otlp")]
     let (_rt, reload_handle, log_appender_guard) = {
-        // init logging in a separate runtime if we are sending traces to an opentelemetry server
         let rt = Runtime::new()?;
         let (reload_handle, log_appender_guard) = rt.block_on(async {
-            let mut log_builder = ant_logging::LogBuilder::new(logging_targets);
+            let mut log_builder = ant_logging::LogBuilder::new(logging_targets)
+                .filter(filter); // 应用全局过滤器
+
             log_builder.output_dest(output_dest.clone());
             log_builder.format(opt.log_format.unwrap_or(LogFormat::Default));
             if let Some(files) = opt.max_log_files {
