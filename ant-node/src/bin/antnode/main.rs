@@ -44,7 +44,6 @@ use tokio::{
 };
 use tracing_appender::non_blocking::WorkerGuard;
 use tracing_subscriber::filter::LevelFilter;
-use ant_logging::Level;
 
 #[derive(Debug, Clone)]
 pub enum LogOutputDestArg {
