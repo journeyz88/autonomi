@@ -770,7 +770,7 @@ impl Node {
             (_, Some(value)) => {
                 let distance = U256::from_big_endian(&value);
                 peer_addrs
-                    .into_iter()
+                    .iter()
                     .filter_map(|(peer_id, multi_addrs)| {
                         let addr = NetworkAddress::from(*peer_id);
                         if target.distance(&addr).0 <= distance {
